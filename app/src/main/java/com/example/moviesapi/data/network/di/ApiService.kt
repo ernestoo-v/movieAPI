@@ -26,6 +26,11 @@ interface ApiService {
         @Query("page") page: Int
     ): PopularMovieList
 
+    @GET("trending/movie/{time_window}?language=en-US")
+    suspend fun getTrendingMovies(
+        @Path("time_window") time_window: String,
+    ): PopularMovieList
+
     @GET("movie/{movie_id}?language=en-US")
     suspend fun getMovieDetail(
         @Path("movie_id") movieId: Int,
@@ -59,6 +64,8 @@ interface ApiService {
         @Query("page") page: Int
     ): MovieSearch
 
+
+    //trending/movie/week?language=en-US"
     /*
         @GET("character/{id}")
         suspend fun getCharacterDetail(@Path("id") characterId: Int): Character

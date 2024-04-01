@@ -1,10 +1,9 @@
-package com.example.moviesapi.ui.screens.mainScreen
+package com.example.moviesapi.ui.screens.movie.movieDiscover
 
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -43,26 +41,22 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.moviesapi.data.entities.movieLists.PopularMovieResult
+import com.example.moviesapi.ui.screens.common.PopularMovieResultListItem
 import com.example.moviesapi.ui.screens.common.ShowLoadingIndicator
-
+import com.example.moviesapi.ui.screens.movie.popularMovies.MoviesPopularViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PopularMovieResultList(
-    mainScreenViewModel: MainScreenViewModel,
+fun MovieDiscoverScreen(
+    moviesDiscoverViewModel: MovieDiscoverViewModel,
     modifier: Modifier = Modifier,
-    pageNumber: Int,
     onMovieClick: (movieId: Int) -> Unit
 ) {
-    var popularMovies by mainScreenViewModel.popularMovies
-    val loading by mainScreenViewModel.loading
+    var trendingMovies by moviesDiscoverViewModel.trendingMovies
+    val loading by moviesDiscoverViewModel.loading
     var searchQuery by remember { mutableStateOf("") }
 
-    var searchMovies by mainScreenViewModel.moviesSearch
-
-    var pageNumberAppend by remember { mutableStateOf(pageNumber) }
-
-    val scrollState = rememberLazyListState()
+    var searchMovies by moviesDiscoverViewModel.moviesSearch
 
     if (loading) {
         ShowLoadingIndicator()
@@ -71,6 +65,7 @@ fun PopularMovieResultList(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 65.dp)
+
         ) {
             Row(
                 modifier = Modifier
@@ -85,11 +80,11 @@ fun PopularMovieResultList(
                     query = searchQuery,
                     onQueryChange = { newQuery ->
                         searchQuery = newQuery
-                        mainScreenViewModel.getSearchMovie(newQuery, false, "en-US", 1)
+                        moviesDiscoverViewModel.getSearchMovie(newQuery, false, "en-US", 1)
                     },
                     onSearch = {
                         focusManager.clearFocus()
-                        mainScreenViewModel.getPopularMovies(pageNumber)
+                        moviesDiscoverViewModel.getTrendingMovies(1)
                     },
                     colors = SearchBarDefaults.colors(
                         containerColor = Color.Transparent
@@ -148,14 +143,14 @@ fun PopularMovieResultList(
                             modifier = Modifier.padding(5.dp)
                         )
                     }
-
                 } else {
-                    items(popularMovies) { popularMovieResult ->
+                    items(trendingMovies) { popularMovieResult ->
                         PopularMovieResultListItem(
                             popularMovieResult = popularMovieResult,
                             onClick = {
-                                Log.d("Revisar","Movie click -> ${popularMovieResult.id}")
-                                onMovieClick(popularMovieResult.id) },
+                                Log.d("Revisar", "Movie click -> ${popularMovieResult.id}")
+                                onMovieClick(popularMovieResult.id)
+                            },
                             //Padding entre las cajas
                             modifier = Modifier.padding(5.dp)
                         )
@@ -163,76 +158,9 @@ fun PopularMovieResultList(
 
                 }
             }
-
         }
-
     }
-    LaunchedEffect(mainScreenViewModel) {
-        mainScreenViewModel.getPopularMovies(pageNumber)
-    }
-}
-
-/*
-@Composable
-fun SearchBar(
-    searchQuery: String,
-    onSearchQueryChange: (String) -> Unit,
-    onSearch: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val focusManager = LocalFocusManager.current
-
-    TextField(
-        value = searchQuery,
-        onValueChange = { newQuery ->
-            onSearchQueryChange(newQuery)
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 30.dp)
-            .background(Color.Green),
-        placeholder = { Text("Search...", fontSize = 20.sp,modifier=Modifier.padding(20.dp)) },
-        singleLine = true,
-        textStyle = TextStyle(fontSize = 20.sp),
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                onSearch()
-                focusManager.clearFocus()
-            }
-        )
-    )
-}*/
-
-
-//@Preview(showBackground = true)
-@Composable
-fun PopularMovieResultListItem(
-    popularMovieResult: PopularMovieResult,
-    onClick: () -> Unit,
-    modifier: Modifier
-) {
-    CharacterThumb(popularMovieResult, onClick)
-}
-
-@Composable
-fun CharacterThumb(item: PopularMovieResult, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(2.dp)
-            .clickable { onClick() }
-    ) {
-        AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://image.tmdb.org/t/p/w500/${item.poster_path}")
-                .crossfade(500)
-                .build(),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillHeight
-        )
+    LaunchedEffect(trendingMovies) {
+        moviesDiscoverViewModel.getTrendingMovies(1)
     }
 }
