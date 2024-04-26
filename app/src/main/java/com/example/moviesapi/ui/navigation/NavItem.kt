@@ -18,10 +18,13 @@ sealed class NavItem(
         navArgument(it.key) { type = it.navType }
     }
 
-    object MainTab : NavItem("main", listOf(NavArg.TabId))
-    object MainPages : NavItem("main2", listOf(NavArg.PageId))
-    object Detail : NavItem("detail", listOf(NavArg.MovieId))
-    object CastPersonDetail : NavItem("castPersonDetail", listOf(NavArg.PersonId))
+    object MainTab : NavItem(baseRoute = "main", navArgs = listOf(NavArg.TabId))
+    object MainPages : NavItem(baseRoute = "main2", navArgs = listOf(NavArg.PageId))
+    object Detail : NavItem(baseRoute = "detail", navArgs = listOf(NavArg.MovieId))
+    object CastPersonDetail : NavItem(
+        baseRoute = "castPersonDetail",
+        navArgs = listOf(NavArg.PersonId)
+    )
 
     fun createMainNavRoute(tabId: Int) = "$baseRoute/$tabId"
     fun createNavRoute(pageId: Int) = "$baseRoute/$pageId"

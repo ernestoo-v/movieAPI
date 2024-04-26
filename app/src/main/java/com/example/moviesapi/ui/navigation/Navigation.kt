@@ -30,9 +30,6 @@ fun Navigation(
     ) {
         addDestinations(navController, moviesPopularViewModel, movieDiscoverViewModel)
     }
-    /* NavigationBarMolecule(tabBarItems = tabBarItems, onclick = {
-         navController.navigate(it)
-     })*/
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -65,6 +62,7 @@ private fun NavGraphBuilder.addDestinations(
             )
         }
     }
+
     composable(
         route = NavItem.MainPages.route,
         arguments = NavItem.MainPages.args

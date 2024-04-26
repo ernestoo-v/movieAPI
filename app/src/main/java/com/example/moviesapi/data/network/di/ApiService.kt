@@ -63,8 +63,6 @@ interface ApiService {
         @Query("language") language: String,
         @Query("page") page: Int
     ): MovieSearch
-
-
     //trending/movie/week?language=en-US"
     /*
         @GET("character/{id}")
